@@ -55,9 +55,15 @@
         _locationManager.delegate = self;
     }
     [_locationManager startUpdatingLocation];
-
     
-    _timer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(fireTimer:) userInfo:nil repeats:YES];
+    //tells the app to keep things running in background ??
+    UIBackgroundTaskIdentifier bgTask =0;
+    UIApplication  *app = [UIApplication sharedApplication];
+    bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
+        [app endBackgroundTask:bgTask];
+    }];
+    
+    _timer = [NSTimer scheduledTimerWithTimeInterval:15 target:self selector:@selector(fireTimer:) userInfo:nil repeats:YES];
     
     
 }
@@ -70,13 +76,8 @@
         [_locationManager startUpdatingLocation];
         NSLog(@"updated location");
 //    }
-//    
-//    UILocalNotification* localNotification = [[UILocalNotification alloc] init];
-//    localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:10];
-//    localNotification.alertBody = @"DANGER";
-////    localNotification.timeZone = [NSTimeZone defaultTimeZone];
-//    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
-//    NSLog(@"notification is scheduled");
+//
+    
     
     //check what time it is
     //get location
@@ -156,12 +157,19 @@
                             lng, @"lon",
                             nil];
     [httpClient getPath:@"/api" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-//        NSString *responseStr = [[NSString alloc] initWithData:responseObject encoding:NSUTF8StringEncoding];
-//        NSLog(@"Request Successful, response '%@'", responseStr);
-        
         _crimeDic = [NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
-        NSLog(@"crime dic :%@:", _crimeDic);
-        [self showAnnotationsAndData];
+//        NSLog(@"crime dic :%@:", _crimeDic);
+        
+        //if app is backgrounded just send notification
+        UIApplicationState state = [[UIApplication sharedApplication] applicationState];
+        if (state == UIApplicationStateBackground || state == UIApplicationStateInactive)
+        {
+            [self sendLocalNotification];
+        }
+        else if(state == UIApplicationStateActive) {
+            [self showAnnotationsAndData];
+        }
+
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"[HTTPClient Error]: %@", error.localizedDescription);
     }];
@@ -169,10 +177,9 @@
 -(void) showAnnotationsAndData {
     NSDictionary *crimes = [_crimeDic objectForKey:@"data"];
     
-    for(NSDictionary *dic in crimes) {
-//        NSLog(@"id: %@", [dic objectForKey:@"cdid"]);
-        
+    for(NSDictionary *dic in crimes) {        
         MKPlacemark *mPlacemark = [[MKPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake([[dic objectForKey:@"lat"] doubleValue], [[dic objectForKey:@"lon"] doubleValue]) addressDictionary:nil];
+
         [_mapView addAnnotation:mPlacemark];
     }
 }
@@ -206,4 +213,13 @@
 //{
 //    NSLog(@"Row pressed!!");
 //}
+-(void) sendLocalNotification {
+    UILocalNotification* localNotification = [[UILocalNotification alloc] init];
+    localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
+    localNotification.alertBody = @"DANGER";
+    //    localNotification.timeZone = [NSTimeZone defaultTimeZone];
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+    NSLog(@"notification is scheduled");
+
+}
 @end
