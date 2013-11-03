@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface CrimeBreakdownVC : UITableViewController
 @property (strong, nonatomic) NSArray *crimeData;
+@property CLLocation *userLocation;
+
+-(IBAction)backBtn:(id)sender;
 @end

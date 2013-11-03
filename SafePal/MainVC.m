@@ -272,10 +272,18 @@
         // Get reference to the destination view controller
         CrimeBreakdownVC *vc = [segue destinationViewController];
         vc.crimeData = _crimesArray;
+        CLLocation *loc = [[CLLocation alloc] initWithLatitude:_userLoc.latitude longitude:_userLoc.longitude];
+        vc.userLocation = loc;
     }
 }
 @end
 
 //TODO
     // check for wifi
+    //change safe/unsafe label
+    //choose colors
+    //get icons for crime types
+    //sort tableviews by crime type
+    //display text in bottom view
+
 

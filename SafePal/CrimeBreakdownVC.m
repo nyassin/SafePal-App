@@ -8,6 +8,8 @@
 
 #import "CrimeBreakdownVC.h"
 
+#define METERS_PER_MILE 1609.344
+
 @interface CrimeBreakdownVC ()
 
 @end
@@ -15,6 +17,7 @@
 @implementation CrimeBreakdownVC
 
 @synthesize crimeData=_crimeData;
+@synthesize userLocation=_userLocation;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -59,14 +62,36 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
+    static NSString *CellIdentifier = @"crimeCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
+//    UIImageView *img = (UIImageView *) [cell viewWithTag:200];
+
+    //type of crime
+    UILabel *type = (UILabel *) [cell viewWithTag:201];
+    type.text = [[_crimeData objectAtIndex:indexPath.row] objectForKey:@"type"];
     
-    // Configure the cell...
+    //date to format using yesterday, today...
+    UILabel *date = (UILabel *) [cell viewWithTag:202];
+    date.text = [[_crimeData objectAtIndex:indexPath.row] objectForKey:@"date"];
+    
+    CLLocationDegrees lat = [[[_crimeData objectAtIndex:indexPath.row] objectForKey:@"lat"] doubleValue];
+    CLLocationDegrees lng = [[[_crimeData objectAtIndex:indexPath.row] objectForKey:@"lon"] doubleValue];
+    //distance between user and crime
+    CLLocation *crimeLoc = [[CLLocation alloc] initWithLatitude:lat longitude:lng];
+    UILabel *dist = (UILabel *) [cell viewWithTag:203];
+    dist.text = [self distanceBetween:crimeLoc];
     
     return cell;
 }
-
+-(NSString *) distanceBetween:(CLLocation *) crimeLocation {
+    
+    CLLocationDistance dist = [crimeLocation distanceFromLocation:_userLocation];
+    double miles = dist / METERS_PER_MILE ;
+    NSString* formattedNumber = [NSString stringWithFormat:@"%.01f", miles];
+    NSString *distStr = [NSString stringWithFormat:@"%@ miles", formattedNumber];
+    NSLog(@"distance : %@", distStr);
+    return distStr;
+}
 /*
 // Override to support conditional editing of the table view.
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -117,5 +142,7 @@
 }
 
  */
-
+-(IBAction)backBtn:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 @end
