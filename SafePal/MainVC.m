@@ -8,8 +8,11 @@
 
 #import "mainVC.h"
 #import "AFNetworking.h"
-//#import "AFHTTPRequestOperationManager.h"
 #import <CoreLocation/CoreLocation.h>
+//#import <Foundation/Foundation.h>
+//#import <SystemConfiguration/SystemConfiguration.h>
+//#import <netinet/in.h>
+
 
 
 #define METERS_PER_MILE 1609.344
@@ -41,11 +44,6 @@
     _isOnWifi = NO;
 
     _crimeCategories = [[NSArray alloc] initWithObjects:@"Arrest", @"Arson", @"Assault", @"Burglary", @"Robbery", @"Shooting", @"Theft", @"Vandalism", @"Other", nil];
-    
-
-    
-//    [_mapView setShowsUserLocation:YES];
-    
 
     
     //initialize location manager
@@ -63,21 +61,55 @@
         [app endBackgroundTask:bgTask];
     }];
     
-    _timer = [NSTimer scheduledTimerWithTimeInterval:15 target:self selector:@selector(fireTimer:) userInfo:nil repeats:YES];
+//    NSDate *now = [NSDate date];
+//    int daysToAdd = 1;
+//    NSDate *newDate1 = [now dateByAddingTimeInterval:60*60*24*daysToAdd];
     
+    
+
+    [self schedule8PMTimer];
+    
+    
+    
+}
+-(void) schedule8PMTimer {
+    int hour = [self getHour];
+    NSDate *date = [NSDate date];
+    NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
+    NSUInteger preservedComponents = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
+    date = [calendar dateFromComponents:[calendar components:preservedComponents fromDate:date]];
+    if(hour < 20) //if it's not 8PM today yet
+        date = [date dateByAddingTimeInterval:60*60*20]; //set the date to today at 8PM
+    else
+        date = [date dateByAddingTimeInterval:60*60*44]; //set the date to tomorrow at 8PM
+    
+    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(startTracking:) userInfo:nil repeats:NO];
+}
+-(void) startTracking: (NSTimer *) timer {
+    _timer = [NSTimer scheduledTimerWithTimeInterval:15 target:self selector:@selector(fireTimer:) userInfo:nil repeats:YES];
     
 }
 -(void) fireTimer: (NSTimer *) timer {
 
-//    int hour = [self getHour];
+    
+    UIApplicationState state = [[UIApplication sharedApplication] applicationState];
+
+    int hour = [self getHour];
     
     //check if it's nighttime --> run in background
-//    if(hour >=20 || hour <= 4) {
-        [_locationManager startUpdatingLocation];
-        NSLog(@"updated location");
-//    }
+    if(hour >=20 || hour <= 4) {
+        if (state == UIApplicationStateBackground || state == UIApplicationStateInactive)
+        {
+            [_locationManager startUpdatingLocation];
+            NSLog(@"updated location");
+        }
+    }
 //
-    
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkChanged:) name:kReachabilityChangedNotification object:nil];
+//    
+//    reachability = [Reachability reachabilityForInternetConnection];
+//    [reachability startNotifier];
+//    
     
     //check what time it is
     //get location
@@ -85,6 +117,17 @@
     //show marker on map if app is in foreground
     //
 }
+
+
+//- (void)networkChanged:(NSNotification *)notification
+//{
+//    
+//    NetworkStatus remoteHostStatus = [reachability currentReachabilityStatus];
+//    
+//    if(remoteHostStatus == NotReachable) { NSLog(@"not reachable");}
+//    else if (remoteHostStatus == ReachableViaWiFiNetwork) { NSLog(@"wifi"); }
+//    else if (remoteHostStatus == ReachableViaCarrierDataNetwork) { NSLog(@"carrier"); }
+//}
 -(int) getHour {
     //need to check if it's night time (8PM-4AM)
     NSDate *now = [NSDate date];
@@ -96,14 +139,11 @@
     NSString *hourStr = [formatter stringFromDate:now];
     NSLog(@"%@", hourStr);
     
-    int hour = [hourStr intValue];
-    
-    return hour;
+    return [hourStr intValue];
 }
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation{
-    NSLog(@"location: %@", newLocation);
     
     CLLocationCoordinate2D mapLocation;
     mapLocation.latitude = newLocation.coordinate.latitude;
@@ -130,11 +170,11 @@
 }
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
 {
-    NSLog(@"The geocoder has returned: %@", [placemark addressDictionary]);
+//    NSLog(@"The geocoder has returned: %@", [placemark addressDictionary]);
     _zipCode = [[placemark addressDictionary] objectForKey:@"ZIP"];
     NSLog(@"zip: %@", _zipCode);
     
-    [self getCrimeDataWithLatitude:_userLoc.latitude andLongitude:_userLoc.longitude andZipCode:22 andCity:@"lkajsdflkjasdf"];
+    [self getCrimeDataWithLatitude:_userLoc.latitude andLongitude:_userLoc.longitude andZipCode:_zipCode andCity:@"lkajsdflkjasdf"];
 
 }
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
@@ -146,7 +186,7 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void) getCrimeDataWithLatitude:(double) latitude andLongitude:(double) longitude andZipCode:(int) zipCode andCity:(NSString *) city {
+-(void) getCrimeDataWithLatitude:(double) latitude andLongitude:(double) longitude andZipCode:(NSString *) zipCode andCity:(NSString *) city {
     NSURL *url = [NSURL URLWithString:@"http://safepal.herokuapp.com/"];
     AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
     NSNumber *lat = [NSNumber numberWithDouble:latitude];
@@ -164,7 +204,7 @@
         UIApplicationState state = [[UIApplication sharedApplication] applicationState];
         if (state == UIApplicationStateBackground || state == UIApplicationStateInactive)
         {
-            [self sendLocalNotification];
+            //[self sendLocalNotification];
         }
         else if(state == UIApplicationStateActive) {
             [self showAnnotationsAndData];
