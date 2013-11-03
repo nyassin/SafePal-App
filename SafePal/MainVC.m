@@ -223,6 +223,13 @@
         BOOL dangerous = [[[_crimeDic objectForKey:@"metadata"] objectForKey:@"sendAlert"] boolValue];
         NSLog(@"dangerous: %@", [[_crimeDic objectForKey:@"metadata"] objectForKey:@"sendAlert"] );
         NSString *reason = [[_crimeDic objectForKey:@"metadata"] objectForKey:@"reason"];
+        
+        NSString *countLabel = [[_crimeDic objectForKey:@"metadata"] objectForKey:@"countLabel"];
+        NSString *averageLabel = [[_crimeDic objectForKey:@"metadata"] objectForKey:@"averageLabel"];
+        NSString *mostCommon = [[_crimeDic objectForKey:@"metadata"] objectForKey:@"mostCommon"];
+        _mostCommonCrimeLabel.text = mostCommon;
+        _currentLocationCrimeLabel.text = countLabel;
+        _zipcodeAvgCrimeLabel.text = averageLabel;
         //if app is backgrounded just send notification
         UIApplicationState state = [[UIApplication sharedApplication] applicationState];
         if (state == UIApplicationStateBackground || state == UIApplicationStateInactive)
@@ -254,7 +261,7 @@
 -(void) sendLocalNotification {
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
     localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
-    localNotification.alertBody = @"Be careful!";
+    localNotification.alertBody = @"High crime detected in the area. Be careful.";
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     NSLog(@"notification is scheduled");
 
