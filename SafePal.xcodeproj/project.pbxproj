@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C89CE2201826D4A000E2C339 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C89CE21E1826D4A000E2C339 /* icon.png */; };
+		C89CE2211826D4A000E2C339 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C89CE21F1826D4A000E2C339 /* icon@2x.png */; };
 		D78223D81825DDBF00BCCC9C /* CrimeBreakdownVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */; };
 		D7A64CC118256A9A000C3F4C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A64CC018256A9A000C3F4C /* Foundation.framework */; };
 		D7A64CC318256A9A000C3F4C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A64CC218256A9A000C3F4C /* CoreGraphics.framework */; };
@@ -46,6 +48,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C89CE21E1826D4A000E2C339 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
+		C89CE21F1826D4A000E2C339 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
 		D78223D61825DDBF00BCCC9C /* CrimeBreakdownVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrimeBreakdownVC.h; sourceTree = "<group>"; };
 		D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CrimeBreakdownVC.m; sourceTree = "<group>"; };
 		D7A64CBD18256A9A000C3F4C /* SafePal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafePal.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -116,6 +120,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C89CE2151826D3E700E2C339 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C89CE21E1826D4A000E2C339 /* icon.png */,
+				C89CE21F1826D4A000E2C339 /* icon@2x.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		D7A64CB418256A9A000C3F4C = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +165,7 @@
 		D7A64CC618256A9A000C3F4C /* SafePal */ = {
 			isa = PBXGroup;
 			children = (
+				C89CE2151826D3E700E2C339 /* Resources */,
 				D7A64CD218256A9A000C3F4C /* Main.storyboard */,
 				D7A64CCF18256A9A000C3F4C /* SafePalAppDelegate.h */,
 				D7A64CD018256A9A000C3F4C /* SafePalAppDelegate.m */,
@@ -296,9 +310,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C89CE2201826D4A000E2C339 /* icon.png in Resources */,
 				D7A64CD918256A9A000C3F4C /* Images.xcassets in Resources */,
 				D7A64CCB18256A9A000C3F4C /* InfoPlist.strings in Resources */,
 				D7A64CD418256A9A000C3F4C /* Main.storyboard in Resources */,
+				C89CE2211826D4A000E2C339 /* icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
