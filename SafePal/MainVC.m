@@ -21,6 +21,8 @@
 @property CLLocationCoordinate2D userLoc;
 @property (strong, nonatomic) NSDictionary *crimeDic;
 @property (strong, nonatomic) NSArray *crimesArray;
+@property (strong, nonatomic) CLGeocoder *reverseGeo;
+@property (strong, nonatomic) NSString *locationString;
 @end
 
 @implementation MainVC
@@ -64,7 +66,6 @@
     
 
     [self schedule8PMAnd6AMTimer];
-
 }
 -(void) schedule8PMAnd6AMTimer {
     //the hour right now
@@ -95,8 +96,6 @@
     [_timer invalidate];
 }
 -(void) fireTimer: (NSTimer *) timer {
-
-    
     UIApplicationState state = [[UIApplication sharedApplication] applicationState];
 
     int hour = [self getHour];
@@ -166,6 +165,25 @@
     //stop location manager
     [_locationManager stopUpdatingLocation];
     
+    // Update location label
+    [self updateCurrentLocationLabel];    
+}
+- (void)updateCurrentLocationLabel {
+    CLLocation *curLocation = [[CLLocation alloc] initWithLatitude:_userLoc.latitude longitude:_userLoc.longitude];
+    
+    if (!self.reverseGeo) {
+        self.reverseGeo = [[CLGeocoder alloc] init];
+    }
+    NSLog(@"current location: %i %i", _userLoc.latitude, _userLoc.longitude);
+    
+    [self.reverseGeo reverseGeocodeLocation:curLocation completionHandler:
+     ^(NSArray *placemarks, NSError *error) {
+         NSLog(@"Placemarks: %@", placemarks);
+         CLPlacemark *placemark = [placemarks firstObject];
+         self.locationString = [NSString stringWithFormat:@"%@, %@", [placemark name],[placemark locality]];
+         NSLog(@"Location String: %@", self.locationString);
+         self.currentAddressLabel.text = self.locationString;
+     }];
 }
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
     UIAlertView *err = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
