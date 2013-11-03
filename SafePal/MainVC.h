@@ -13,7 +13,13 @@
 @interface MainVC : UIViewController <CLLocationManagerDelegate, MKReverseGeocoderDelegate>
 
 @property (strong, nonatomic) IBOutlet MKMapView *mapView;
-@property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) CLLocation *location;
+@property (strong, nonatomic) IBOutlet UILabel *breakdownLabel;
+@property (strong, nonatomic) IBOutlet UIView *breakdownView;
+
+
+-(IBAction)panicBtnPressed:(id)sender;
+-(IBAction)breakdownBtnPressed:(id)sender;
+
 @end

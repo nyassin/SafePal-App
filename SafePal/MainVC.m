@@ -9,11 +9,7 @@
 #import "mainVC.h"
 #import "AFNetworking.h"
 #import <CoreLocation/CoreLocation.h>
-//#import <Foundation/Foundation.h>
-//#import <SystemConfiguration/SystemConfiguration.h>
-//#import <netinet/in.h>
-
-
+#import "CrimeBreakdownVC.h"
 
 #define METERS_PER_MILE 1609.344
 
@@ -24,6 +20,7 @@
 @property (strong, nonatomic) NSArray *crimeCategories;
 @property CLLocationCoordinate2D userLoc;
 @property (strong, nonatomic) NSDictionary *crimeDic;
+@property (strong, nonatomic) NSArray *crimesArray;
 @end
 
 @implementation MainVC
@@ -36,6 +33,10 @@
 @synthesize crimeCategories=_crimeCategories;
 @synthesize userLoc=_userLoc;
 @synthesize crimeDic=_crimeDic;
+@synthesize crimesArray=_crimesArray;
+@synthesize breakdownLabel=_breakdownLabel;
+@synthesize breakdownView=_breakdownView;
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -54,40 +55,44 @@
     }
     [_locationManager startUpdatingLocation];
     
-    //tells the app to keep things running in background ??
+    //tells the app to keep things running in background -->??
     UIBackgroundTaskIdentifier bgTask =0;
     UIApplication  *app = [UIApplication sharedApplication];
     bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
         [app endBackgroundTask:bgTask];
     }];
     
-//    NSDate *now = [NSDate date];
-//    int daysToAdd = 1;
-//    NSDate *newDate1 = [now dateByAddingTimeInterval:60*60*24*daysToAdd];
-    
-    
 
-    [self schedule8PMTimer];
-    
-    
-    
+    [self schedule8PMAnd6AMTimer];
+
 }
--(void) schedule8PMTimer {
+-(void) schedule8PMAnd6AMTimer {
+    //the hour right now
     int hour = [self getHour];
     NSDate *date = [NSDate date];
     NSCalendar *calendar = [NSCalendar autoupdatingCurrentCalendar];
     NSUInteger preservedComponents = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
     date = [calendar dateFromComponents:[calendar components:preservedComponents fromDate:date]];
+    NSDate *morning = date;
     if(hour < 20) //if it's not 8PM today yet
         date = [date dateByAddingTimeInterval:60*60*20]; //set the date to today at 8PM
     else
         date = [date dateByAddingTimeInterval:60*60*44]; //set the date to tomorrow at 8PM
     
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(startTracking:) userInfo:nil repeats:NO];
+    NSTimer *timer8PM = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(startTracking:) userInfo:nil repeats:NO];
+    if(hour > 6)
+        morning = [morning dateByAddingTimeInterval:60*60*30]; //set the date to tomorrow morning at 6AM
+    else
+        morning = [morning dateByAddingTimeInterval:60*60*6]; //set the date to today at 6AM
+    
+        NSTimer *timer6AM = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(stopTracking:) userInfo:nil repeats:NO];
 }
 -(void) startTracking: (NSTimer *) timer {
     _timer = [NSTimer scheduledTimerWithTimeInterval:15 target:self selector:@selector(fireTimer:) userInfo:nil repeats:YES];
     
+}
+-(void) stopTracking: (NSTimer *) timer {
+    [_timer invalidate];
 }
 -(void) fireTimer: (NSTimer *) timer {
 
@@ -137,7 +142,6 @@
     [formatter setLocale:formatterLocale];
     [formatter setDateFormat:@"HH"];
     NSString *hourStr = [formatter stringFromDate:now];
-    NSLog(@"%@", hourStr);
     
     return [hourStr intValue];
 }
@@ -151,7 +155,7 @@
     
     _userLoc.latitude = newLocation.coordinate.latitude;
     _userLoc.longitude = newLocation.coordinate.longitude;
-    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(mapLocation, 0.5*METERS_PER_MILE, 0.5*METERS_PER_MILE);
+    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(mapLocation,METERS_PER_MILE,METERS_PER_MILE);
 
     MKReverseGeocoder *geocoder = [[MKReverseGeocoder alloc] initWithCoordinate:mapLocation];
 	[geocoder setDelegate:self];
@@ -170,9 +174,9 @@
 }
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
 {
-//    NSLog(@"The geocoder has returned: %@", [placemark addressDictionary]);
+    //gets the zipcode of user location
     _zipCode = [[placemark addressDictionary] objectForKey:@"ZIP"];
-    NSLog(@"zip: %@", _zipCode);
+
     
     [self getCrimeDataWithLatitude:_userLoc.latitude andLongitude:_userLoc.longitude andZipCode:_zipCode andCity:@"lkajsdflkjasdf"];
 
@@ -198,16 +202,19 @@
                             nil];
     [httpClient getPath:@"/api" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         _crimeDic = [NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
-//        NSLog(@"crime dic :%@:", _crimeDic);
-        
+        BOOL dangerous = [[[_crimeDic objectForKey:@"metadata"] objectForKey:@"sendAlert"] boolValue];
+        NSLog(@"dangerous: %@", [[_crimeDic objectForKey:@"metadata"] objectForKey:@"sendAlert"] );
+        NSString *reason = [[_crimeDic objectForKey:@"metadata"] objectForKey:@"reason"];
         //if app is backgrounded just send notification
         UIApplicationState state = [[UIApplication sharedApplication] applicationState];
         if (state == UIApplicationStateBackground || state == UIApplicationStateInactive)
         {
-            //[self sendLocalNotification];
+            if(dangerous)
+                [self sendLocalNotification];
         }
         else if(state == UIApplicationStateActive) {
             [self showAnnotationsAndData];
+            [self updateViewWithReason:reason andDangerousBool:dangerous];
         }
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -215,51 +222,60 @@
     }];
 }
 -(void) showAnnotationsAndData {
-    NSDictionary *crimes = [_crimeDic objectForKey:@"data"];
+    _crimesArray = [_crimeDic objectForKey:@"data"];
+    NSLog(@"count: %d", [_crimesArray count]);
     
-    for(NSDictionary *dic in crimes) {        
-        MKPlacemark *mPlacemark = [[MKPlacemark alloc] initWithCoordinate:CLLocationCoordinate2DMake([[dic objectForKey:@"lat"] doubleValue], [[dic objectForKey:@"lon"] doubleValue]) addressDictionary:nil];
-
-        [_mapView addAnnotation:mPlacemark];
+    for(NSDictionary *dic in _crimesArray) {
+        MKPointAnnotation *ann = [[MKPointAnnotation alloc] init];
+        [ann setCoordinate:CLLocationCoordinate2DMake([[dic objectForKey:@"lat"] doubleValue], [[dic objectForKey:@"lon"] doubleValue])];
+        [ann setTitle:[dic objectForKey:@"type"]];
+        [_mapView addAnnotation:ann];
     }
 }
-//#pragma mark tableview delegate
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-//{
-//    // Return the number of sections.
-//    return 1;
-//}
-//
-//- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-//{
-//    // Return the number of rows in the section.
-//    return 5;
-//}
-//
-//- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    static NSString *CellIdentifier = @"CrimeDetailCell";
-//    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-//    
-//    // Configure the cell...
-//    cell.textLabel.text = @"Hello there!";
-//    
-//    return cell;
-//}
-//
-//#pragma mark - Table view delegate
-//
-//- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    NSLog(@"Row pressed!!");
-//}
+
 -(void) sendLocalNotification {
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
     localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
-    localNotification.alertBody = @"DANGER";
-    //    localNotification.timeZone = [NSTimeZone defaultTimeZone];
+    localNotification.alertBody = @"Be careful!";
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     NSLog(@"notification is scheduled");
 
 }
+//call 911 if panic button is pressed
+-(IBAction)panicBtnPressed:(id)sender {
+    NSString *phNo = @"911";
+    NSURL *phoneUrl = [NSURL URLWithString:[NSString  stringWithFormat:@"telprompt:%@",phNo]];
+    
+    if ([[UIApplication sharedApplication] canOpenURL:phoneUrl])
+        [[UIApplication sharedApplication] openURL:phoneUrl];
+}
+-(IBAction)breakdownBtnPressed:(id)sender{
+    [self performSegueWithIdentifier:@"breakdownSegue" sender:self];
+}
+//update bottom view when alarm changes
+-(void) updateViewWithReason: (NSString *) reason andDangerousBool: (BOOL) dangerous {
+    NSLog(@"reason: %@, dnagerous : %c", reason, dangerous);
+    
+    if(dangerous) {
+        _breakdownView.backgroundColor = [UIColor redColor];
+    }
+    else {
+        _breakdownView.backgroundColor = [UIColor blueColor];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    // Make sure your segue name in storyboard is the same as this line
+    if ([[segue identifier] isEqualToString:@"breakdownSegue"])
+    {
+        // Get reference to the destination view controller
+        CrimeBreakdownVC *vc = [segue destinationViewController];
+        vc.crimeData = _crimesArray;
+    }
+}
 @end
+
+//TODO
+    // check for wifi
+

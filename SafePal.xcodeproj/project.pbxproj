@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D78223D81825DDBF00BCCC9C /* CrimeBreakdownVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */; };
 		D7A64CC118256A9A000C3F4C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A64CC018256A9A000C3F4C /* Foundation.framework */; };
 		D7A64CC318256A9A000C3F4C /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A64CC218256A9A000C3F4C /* CoreGraphics.framework */; };
 		D7A64CC518256A9A000C3F4C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A64CC418256A9A000C3F4C /* UIKit.framework */; };
@@ -45,6 +46,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D78223D61825DDBF00BCCC9C /* CrimeBreakdownVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrimeBreakdownVC.h; sourceTree = "<group>"; };
+		D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CrimeBreakdownVC.m; sourceTree = "<group>"; };
 		D7A64CBD18256A9A000C3F4C /* SafePal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SafePal.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7A64CC018256A9A000C3F4C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D7A64CC218256A9A000C3F4C /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -152,6 +155,8 @@
 				D7A64CD218256A9A000C3F4C /* Main.storyboard */,
 				D7A64CCF18256A9A000C3F4C /* SafePalAppDelegate.h */,
 				D7A64CD018256A9A000C3F4C /* SafePalAppDelegate.m */,
+				D78223D61825DDBF00BCCC9C /* CrimeBreakdownVC.h */,
+				D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */,
 				D7A64CD518256A9A000C3F4C /* MainVC.h */,
 				D7A64CD618256A9A000C3F4C /* MainVC.m */,
 				D7A64CD818256A9A000C3F4C /* Images.xcassets */,
@@ -322,6 +327,7 @@
 				D7A64D1318258429000C3F4C /* UIImageView+AFNetworking.m in Sources */,
 				D7A64D0F18258429000C3F4C /* AFNetworkActivityIndicatorManager.m in Sources */,
 				D7A64D0C18258429000C3F4C /* AFHTTPRequestOperation.m in Sources */,
+				D78223D81825DDBF00BCCC9C /* CrimeBreakdownVC.m in Sources */,
 				D7A64CCD18256A9A000C3F4C /* main.m in Sources */,
 				D7A64D0B18258429000C3F4C /* AFHTTPClient.m in Sources */,
 			);
@@ -532,6 +538,7 @@
 				D7A64CF118256A9A000C3F4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		D7A64CF218256A9A000C3F4C /* Build configuration list for PBXNativeTarget "SafePalTests" */ = {
 			isa = XCConfigurationList;
@@ -540,6 +547,7 @@
 				D7A64CF418256A9A000C3F4C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
