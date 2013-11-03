@@ -10,6 +10,7 @@
 #import "AFNetworking.h"
 #import <CoreLocation/CoreLocation.h>
 #import "CrimeBreakdownVC.h"
+#import "uiflatcolors/UIColor+MLPFlatColors.h"
 
 #define METERS_PER_MILE 1609.344
 
@@ -64,9 +65,10 @@
         [app endBackgroundTask:bgTask];
     }];
     
-       NSTimer* timer2 = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(fireTimer2:) userInfo:nil repeats:YES];
+       NSTimer* timer2 = [NSTimer scheduledTimerWithTimeInterval:20 target:self selector:@selector(fireTimer2:) userInfo:nil repeats:YES];
 
     [self schedule8PMAnd6AMTimer];
+    self.breakdownView.backgroundColor = [UIColor flatGreenColor];
 }
 -(void) schedule8PMAnd6AMTimer {
     //the hour right now
@@ -76,8 +78,9 @@
     NSUInteger preservedComponents = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
     date = [calendar dateFromComponents:[calendar components:preservedComponents fromDate:date]];
     NSDate *morning = date;
+    //        date = [date dateByAddingTimeInterval:60*60*20]; //set the date to today at 8PM
     if(hour < 20) //if it's not 8PM today yet
-        date = [date dateByAddingTimeInterval:60*60*20]; //set the date to today at 8PM
+        date = [date dateByAddingTimeInterval:60*60*14 + 5*60 + 30]; //set the date to today at
     else
         date = [date dateByAddingTimeInterval:60*60*44]; //set the date to tomorrow at 8PM
     
@@ -119,13 +122,7 @@
 //    
 //    reachability = [Reachability reachabilityForInternetConnection];
 //    [reachability startNotifier];
-//    
-    
-    //check what time it is
-    //get location
-    //query crimes
-    //show marker on map if app is in foreground
-    //
+
 }
 
 
@@ -292,11 +289,12 @@
     NSLog(@"reason: %@, dnagerous : %c", reason, dangerous);
     
     if(dangerous) {
-        _breakdownView.backgroundColor = [UIColor redColor];
+        _breakdownView.backgroundColor = [UIColor flatRedColor];
         _breakdownLabel.text = @"Danger Zone";
     }
     else {
-        _breakdownView.backgroundColor = [UIColor greenColor];
+        _breakdownView.backgroundColor = [UIColor flatGreenColor];
+        _breakdownLabel.text = @"Safe Zone";
     }
 }
 
