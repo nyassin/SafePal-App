@@ -236,7 +236,7 @@
 -(void) sendLocalNotification {
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
     localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
-    localNotification.alertBody = @"Be careful!";
+    localNotification.alertBody = @"High crime detected in the area. Be careful.";
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     NSLog(@"notification is scheduled");
 
