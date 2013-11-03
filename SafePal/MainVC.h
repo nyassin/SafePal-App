@@ -16,6 +16,11 @@
 @property (strong, nonatomic) CLLocationManager *locationManager;
 @property (strong, nonatomic) CLLocation *location;
 @property (strong, nonatomic) IBOutlet UILabel *breakdownLabel;
+@property (strong, nonatomic) IBOutlet UILabel *mostCommonCrimeLabel;
+@property (strong, nonatomic) IBOutlet UILabel *zipcodeAvgCrimeLabel;
+@property (strong, nonatomic) IBOutlet UILabel *currentLocationCrimeLabel;
+@property (strong, nonatomic) IBOutlet UILabel *currentAddressLabel;
+
 @property (strong, nonatomic) IBOutlet UIView *breakdownView;
 
 

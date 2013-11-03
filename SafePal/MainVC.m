@@ -258,6 +258,7 @@
     
     if(dangerous) {
         _breakdownView.backgroundColor = [UIColor redColor];
+        _breakdownLabel.text = @"Danger Zone";
     }
     else {
         _breakdownView.backgroundColor = [UIColor blueColor];
