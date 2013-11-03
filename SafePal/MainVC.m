@@ -64,6 +64,7 @@
         [app endBackgroundTask:bgTask];
     }];
     
+       NSTimer* timer2 = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(fireTimer2:) userInfo:nil repeats:YES];
 
     [self schedule8PMAnd6AMTimer];
 }
@@ -89,11 +90,14 @@
         NSTimer *timer6AM = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(stopTracking:) userInfo:nil repeats:NO];
 }
 -(void) startTracking: (NSTimer *) timer {
-    _timer = [NSTimer scheduledTimerWithTimeInterval:15 target:self selector:@selector(fireTimer:) userInfo:nil repeats:YES];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(fireTimer:) userInfo:nil repeats:YES];
     
 }
 -(void) stopTracking: (NSTimer *) timer {
     [_timer invalidate];
+}
+-(void) fireTimer2: (NSTimer *) timer {
+    [self updateCurrentLocationLabel];
 }
 -(void) fireTimer: (NSTimer *) timer {
     UIApplicationState state = [[UIApplication sharedApplication] applicationState];
@@ -108,6 +112,8 @@
             NSLog(@"updated location");
         }
     }
+    
+     //   [self updateCurrentLocationLabel];
 //
 //    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(networkChanged:) name:kReachabilityChangedNotification object:nil];
 //    
@@ -163,10 +169,14 @@
     [_mapView setRegion:viewRegion animated:YES];
     
     //stop location manager
+    UIApplicationState state = [[UIApplication sharedApplication] applicationState];
+    if (state == UIApplicationStateBackground || state == UIApplicationStateInactive){
     [_locationManager stopUpdatingLocation];
+
+   }
     
     // Update location label
-    [self updateCurrentLocationLabel];    
+//    [self updateCurrentLocationLabel];    
 }
 - (void)updateCurrentLocationLabel {
     CLLocation *curLocation = [[CLLocation alloc] initWithLatitude:_userLoc.latitude longitude:_userLoc.longitude];
@@ -174,7 +184,7 @@
     if (!self.reverseGeo) {
         self.reverseGeo = [[CLGeocoder alloc] init];
     }
-    NSLog(@"current location: %i %i", _userLoc.latitude, _userLoc.longitude);
+//    NSLog(@"current location: %i %i", _userLoc.latitude, _userLoc.longitude);
     
     [self.reverseGeo reverseGeocodeLocation:curLocation completionHandler:
      ^(NSArray *placemarks, NSError *error) {
@@ -286,7 +296,7 @@
         _breakdownLabel.text = @"Danger Zone";
     }
     else {
-        _breakdownView.backgroundColor = [UIColor blueColor];
+        _breakdownView.backgroundColor = [UIColor greenColor];
     }
 }
 
