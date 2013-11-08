@@ -207,6 +207,7 @@
              self.currentAddressLabel.text = self.locationString;
          }
 
+
      }];
 }
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
