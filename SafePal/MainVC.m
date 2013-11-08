@@ -38,7 +38,7 @@
 @synthesize crimeDic=_crimeDic;
 @synthesize crimesArray=_crimesArray;
 @synthesize breakdownLabel=_breakdownLabel;
-@synthesize breakdownView=_breakdownView;
+//@synthesize breakdownView=_breakdownView;
 
 - (void)viewDidLoad
 {
@@ -58,14 +58,15 @@
     }
     [_locationManager startUpdatingLocation];
     
-    //tells the app to keep things running in background -->??
+    //tells the app to keep things running in background
     UIBackgroundTaskIdentifier bgTask =0;
     UIApplication  *app = [UIApplication sharedApplication];
     bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
         [app endBackgroundTask:bgTask];
     }];
     
-       NSTimer* timer2 = [NSTimer scheduledTimerWithTimeInterval:20 target:self selector:@selector(fireTimer2:) userInfo:nil repeats:YES];
+    NSTimer* timer2;
+    timer2 = [NSTimer scheduledTimerWithTimeInterval:20 target:self selector:@selector(fireTimer2:) userInfo:nil repeats:YES];
 
     [self schedule8PMAnd6AMTimer];
     self.breakdownView.backgroundColor = [UIColor flatGreenColor];
@@ -78,23 +79,25 @@
     NSUInteger preservedComponents = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit);
     date = [calendar dateFromComponents:[calendar components:preservedComponents fromDate:date]];
     NSDate *morning = date;
-    //        date = [date dateByAddingTimeInterval:60*60*20]; //set the date to today at 8PM
+
     if(hour < 20) //if it's not 8PM today yet
-        date = [date dateByAddingTimeInterval:60*60*14 + 5*60 + 30]; //set the date to today at
+        date = [date dateByAddingTimeInterval:60*60*20]; //set the date to today at
     else
         date = [date dateByAddingTimeInterval:60*60*44]; //set the date to tomorrow at 8PM
     
-    NSTimer *timer8PM = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(startTracking:) userInfo:nil repeats:NO];
+    NSTimer *timer8PM;
+    timer8PM = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(startTracking:) userInfo:nil repeats:NO];
     if(hour > 6)
         morning = [morning dateByAddingTimeInterval:60*60*30]; //set the date to tomorrow morning at 6AM
     else
         morning = [morning dateByAddingTimeInterval:60*60*6]; //set the date to today at 6AM
     
-        NSTimer *timer6AM = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(stopTracking:) userInfo:nil repeats:NO];
+    NSTimer *timer6AM;
+    timer6AM = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(stopTracking:) userInfo:nil repeats:NO];
 }
 -(void) startTracking: (NSTimer *) timer {
     _timer = [NSTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(fireTimer:) userInfo:nil repeats:YES];
-    
+    [self sendLocalNotification];
 }
 -(void) stopTracking: (NSTimer *) timer {
     [_timer invalidate];
@@ -171,9 +174,7 @@
     [_locationManager stopUpdatingLocation];
 
    }
-    
-    // Update location label
-//    [self updateCurrentLocationLabel];    
+
 }
 - (void)updateCurrentLocationLabel {
     CLLocation *curLocation = [[CLLocation alloc] initWithLatitude:_userLoc.latitude longitude:_userLoc.longitude];
@@ -198,7 +199,7 @@
      }];
 }
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
-    UIAlertView *err = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+  //  UIAlertView *err = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
     
     //[err show];
 }
@@ -319,10 +320,7 @@
 
 //TODO
     // check for wifi
-    //change safe/unsafe label
-    //choose colors
     //get icons for crime types
     //sort tableviews by crime type
-    //display text in bottom view
 
 
