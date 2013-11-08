@@ -20,10 +20,10 @@
 @property (strong, nonatomic) IBOutlet UILabel *zipcodeAvgCrimeLabel;
 @property (strong, nonatomic) IBOutlet UILabel *currentLocationCrimeLabel;
 @property (strong, nonatomic) IBOutlet UILabel *currentAddressLabel;
-
 @property (strong, nonatomic) IBOutlet UIView *breakdownView;
+@property (strong, nonatomic) IBOutlet UILabel *onAndOffButton;
 
-
+-(IBAction)onAndOffButtonPressed: (id)sender;
 -(IBAction)panicBtnPressed:(id)sender;
 -(IBAction)breakdownBtnPressed:(id)sender;
 

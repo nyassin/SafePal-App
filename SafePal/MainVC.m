@@ -70,6 +70,17 @@
     [self schedule8PMAnd6AMTimer];
     self.breakdownView.backgroundColor = [UIColor flatGreenColor];
 }
+
+-(IBAction)onAndOffButtonPressed:(UIBarButtonItem *)sender {
+    if([sender.title isEqualToString:@"On"]) {
+        sender.title = @"Off";
+        
+    } else {
+        
+        sender.title = @"On";
+    }
+    
+}
 -(void) schedule8PMAnd6AMTimer {
     //the hour right now
     int hour = [self getHour];
