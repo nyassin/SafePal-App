@@ -295,7 +295,7 @@
 				ORGANIZATIONNAME = Rivard.Laurent;
 				TargetAttributes = {
 					D7A64CBC18256A9A000C3F4C = {
-						DevelopmentTeam = 9UAPSKMLP4;
+						DevelopmentTeam = X8MSSVKD85;
 					};
 					D7A64CDD18256A9A000C3F4C = {
 						TestTargetID = D7A64CBC18256A9A000C3F4C;
