@@ -181,6 +181,8 @@
     if (!self.reverseGeo) {
         self.reverseGeo = [[CLGeocoder alloc] init];
     }
+    
+    
 //    NSLog(@"current location: %i %i", _userLoc.latitude, _userLoc.longitude);
     
     [self.reverseGeo reverseGeocodeLocation:curLocation completionHandler:
@@ -189,13 +191,16 @@
          CLPlacemark *placemark = [placemarks firstObject];
          self.locationString = [NSString stringWithFormat:@"%@, %@", [placemark name],[placemark locality]];
          NSLog(@"Location String: %@", self.locationString);
-         self.currentAddressLabel.text = self.locationString;
+         if(self.locationString) {
+             self.currentAddressLabel.text = self.locationString;
+         }
+
      }];
 }
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
     UIAlertView *err = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
     
-    [err show];
+    //[err show];
 }
 - (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
 {
@@ -256,7 +261,7 @@
 -(void) showAnnotationsAndData {
     _crimesArray = [_crimeDic objectForKey:@"data"];
     NSLog(@"count: %d", [_crimesArray count]);
-    
+    [_mapView removeAnnotations:_mapView.annotations];
     for(NSDictionary *dic in _crimesArray) {
         MKPointAnnotation *ann = [[MKPointAnnotation alloc] init];
         [ann setCoordinate:CLLocationCoordinate2DMake([[dic objectForKey:@"lat"] doubleValue], [[dic objectForKey:@"lon"] doubleValue])];
