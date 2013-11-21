@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C89CE2201826D4A000E2C339 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = C89CE21E1826D4A000E2C339 /* icon.png */; };
-		C89CE2211826D4A000E2C339 /* icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = C89CE21F1826D4A000E2C339 /* icon@2x.png */; };
 		D78223D81825DDBF00BCCC9C /* CrimeBreakdownVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */; };
 		D78223DC1826DA5100BCCC9C /* UIColor+MLPFlatColors.m in Sources */ = {isa = PBXBuildFile; fileRef = D78223DB1826DA5100BCCC9C /* UIColor+MLPFlatColors.m */; };
 		D7A64CC118256A9A000C3F4C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A64CC018256A9A000C3F4C /* Foundation.framework */; };
@@ -49,8 +47,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C89CE21E1826D4A000E2C339 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
-		C89CE21F1826D4A000E2C339 /* icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon@2x.png"; sourceTree = "<group>"; };
+		7529386A1832DE4E001E4A23 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
+		7529386B1832DE5F001E4A23 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
 		D78223D61825DDBF00BCCC9C /* CrimeBreakdownVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrimeBreakdownVC.h; sourceTree = "<group>"; };
 		D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CrimeBreakdownVC.m; sourceTree = "<group>"; };
 		D78223DA1826DA5100BCCC9C /* UIColor+MLPFlatColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+MLPFlatColors.h"; sourceTree = "<group>"; };
@@ -126,8 +124,6 @@
 		C89CE2151826D3E700E2C339 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				C89CE21E1826D4A000E2C339 /* icon.png */,
-				C89CE21F1826D4A000E2C339 /* icon@2x.png */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -144,6 +140,8 @@
 		D7A64CB418256A9A000C3F4C = {
 			isa = PBXGroup;
 			children = (
+				7529386B1832DE5F001E4A23 /* Icon.png */,
+				7529386A1832DE4E001E4A23 /* Icon@2x.png */,
 				D7A64CC618256A9A000C3F4C /* SafePal */,
 				D7A64CE518256A9A000C3F4C /* SafePalTests */,
 				D7A64CBF18256A9A000C3F4C /* Frameworks */,
@@ -295,7 +293,7 @@
 				ORGANIZATIONNAME = Rivard.Laurent;
 				TargetAttributes = {
 					D7A64CBC18256A9A000C3F4C = {
-						DevelopmentTeam = X8MSSVKD85;
+						DevelopmentTeam = 9UAPSKMLP4;
 					};
 					D7A64CDD18256A9A000C3F4C = {
 						TestTargetID = D7A64CBC18256A9A000C3F4C;
@@ -326,11 +324,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C89CE2201826D4A000E2C339 /* icon.png in Resources */,
 				D7A64CD918256A9A000C3F4C /* Images.xcassets in Resources */,
 				D7A64CCB18256A9A000C3F4C /* InfoPlist.strings in Resources */,
 				D7A64CD418256A9A000C3F4C /* Main.storyboard in Resources */,
-				C89CE2211826D4A000E2C339 /* icon@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -487,7 +483,6 @@
 		D7A64CF018256A9A000C3F4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -503,7 +498,6 @@
 		D7A64CF118256A9A000C3F4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
