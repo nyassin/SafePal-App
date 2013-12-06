@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D77175351841148F008B9DF8 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D77175341841148F008B9DF8 /* SystemConfiguration.framework */; };
 		D78223D81825DDBF00BCCC9C /* CrimeBreakdownVC.m in Sources */ = {isa = PBXBuildFile; fileRef = D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */; };
 		D78223DC1826DA5100BCCC9C /* UIColor+MLPFlatColors.m in Sources */ = {isa = PBXBuildFile; fileRef = D78223DB1826DA5100BCCC9C /* UIColor+MLPFlatColors.m */; };
 		D7A64CC118256A9A000C3F4C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D7A64CC018256A9A000C3F4C /* Foundation.framework */; };
@@ -49,6 +50,7 @@
 /* Begin PBXFileReference section */
 		7529386A1832DE4E001E4A23 /* Icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Icon@2x.png"; sourceTree = "<group>"; };
 		7529386B1832DE5F001E4A23 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Icon.png; sourceTree = "<group>"; };
+		D77175341841148F008B9DF8 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		D78223D61825DDBF00BCCC9C /* CrimeBreakdownVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrimeBreakdownVC.h; sourceTree = "<group>"; };
 		D78223D71825DDBF00BCCC9C /* CrimeBreakdownVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CrimeBreakdownVC.m; sourceTree = "<group>"; };
 		D78223DA1826DA5100BCCC9C /* UIColor+MLPFlatColors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+MLPFlatColors.h"; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D77175351841148F008B9DF8 /* SystemConfiguration.framework in Frameworks */,
 				D7A64D15182585D6000C3F4C /* MobileCoreServices.framework in Frameworks */,
 				D7A64CF6182575D5000C3F4C /* MapKit.framework in Frameworks */,
 				D7A64CC318256A9A000C3F4C /* CoreGraphics.framework in Frameworks */,
@@ -162,6 +165,7 @@
 		D7A64CBF18256A9A000C3F4C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D77175341841148F008B9DF8 /* SystemConfiguration.framework */,
 				D7A64D14182585D6000C3F4C /* MobileCoreServices.framework */,
 				D7A64CF5182575D5000C3F4C /* MapKit.framework */,
 				D7A64CC018256A9A000C3F4C /* Foundation.framework */,
@@ -293,7 +297,7 @@
 				ORGANIZATIONNAME = Rivard.Laurent;
 				TargetAttributes = {
 					D7A64CBC18256A9A000C3F4C = {
-						DevelopmentTeam = 9UAPSKMLP4;
+						DevelopmentTeam = X8MSSVKD85;
 					};
 					D7A64CDD18256A9A000C3F4C = {
 						TestTargetID = D7A64CBC18256A9A000C3F4C;

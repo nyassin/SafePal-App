@@ -7,7 +7,17 @@
 //
 
 #import "SafePalAppDelegate.h"
+#import "AFNetworking.h"
 
+@interface SafePalAppDelegate ()
+@property (nonatomic) UIBackgroundTaskIdentifier bgTask;
+@property (strong, nonatomic) NSTimer *timer;
+@property (strong, nonatomic) CLLocationManager *locationManager;
+@property (strong, nonatomic) CLGeocoder *reverseGeo;
+@property CLLocationCoordinate2D userLoc;
+@property (strong, nonatomic) NSString *zipCode;
+
+@end
 @implementation SafePalAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -28,9 +38,118 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    NSLog(@"did enter background called");
+    [self.locationManager stopUpdatingLocation];
+    
+    UIApplication* app = [UIApplication sharedApplication];
+    
+    _bgTask = [app beginBackgroundTaskWithExpirationHandler:^{
+        [app endBackgroundTask:_bgTask];
+        _bgTask = UIBackgroundTaskInvalid;
+        NSLog(@"did enter background invalidated");
+    }];
+    
+    _timer = [NSTimer scheduledTimerWithTimeInterval:180
+                                                  target:_locationManager
+                                                selector:@selector(getLocation)
+                                                userInfo:nil
+                                                 repeats:YES];
 }
+-(void) getLocation {
+    NSLog(@"timer fired");
+    [_locationManager startUpdatingLocation];
+}
+-(void) sendAlert {
+    UILocalNotification *localNotification = [[UILocalNotification alloc] init];
+    localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
+    localNotification.alertBody = @"Notif from app delegate.";
+    [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
+    NSLog(@"hello");
+}
+-(void) getCrimeDataWithLatitude:(double) latitude andLongitude:(double) longitude andZipCode:(NSString *) zipCode andCity:(NSString *) city {
+    NSURL *url = [NSURL URLWithString:@"http://safepal.herokuapp.com/"];
+    AFHTTPClient *httpClient = [[AFHTTPClient alloc] initWithBaseURL:url];
+    NSNumber *lat = [NSNumber numberWithDouble:latitude];
+    NSNumber *lng = [NSNumber numberWithDouble:longitude];
+    
+    NSDictionary *params = [NSDictionary dictionaryWithObjectsAndKeys:
+                            lat , @"lat",
+                            lng, @"lon",
+                            nil];
+    
+    [httpClient getPath:@"/api" parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *crimeDic = [[NSDictionary alloc] init];
+        crimeDic = [NSJSONSerialization JSONObjectWithData:responseObject options:0 error:nil];
+        NSLog(@"crime dic: %@", crimeDic);
+        BOOL dangerous = [[[crimeDic objectForKey:@"metadata"] objectForKey:@"sendAlert"] boolValue];
+        
+        if(dangerous)
+            [self sendAlert];
+        else
+            NSLog(@"LOC: %@", params);
+
+
+        
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"[HTTPClient Error]: %@", error.localizedDescription);
+    }];
+}
+- (void)locationManager:(CLLocationManager *)manager
+    didUpdateToLocation:(CLLocation *)newLocation
+           fromLocation:(CLLocation *)oldLocation{
+    NSLog(@"location updated in background");
+    CLLocationCoordinate2D mapLocation;
+    mapLocation.latitude = newLocation.coordinate.latitude;
+    mapLocation.longitude = newLocation.coordinate.longitude;
+    
+    _userLoc.latitude = newLocation.coordinate.latitude;
+    _userLoc.longitude = newLocation.coordinate.longitude;
+//    MKCoordinateRegion viewRegion = MKCoordinateRegionMakeWithDistance(mapLocation,METERS_PER_MILE,METERS_PER_MILE);
+    
+    MKReverseGeocoder *geocoder = [[MKReverseGeocoder alloc] initWithCoordinate:mapLocation];
+	[geocoder setDelegate:self];
+	[geocoder start];
+    
+    NSLog(@"new location from app delegate");
+    
+    //stop location updates
+    [_locationManager stopUpdatingLocation];
+
+    
+}
+- (void)updateCurrentLocationLabel {
+    NSLog(@"updateCurrentLocationLabel called");
+    CLLocation *curLocation = [[CLLocation alloc] initWithLatitude:_userLoc.latitude longitude:_userLoc.longitude];
+    
+    if (!self.reverseGeo) {
+        self.reverseGeo = [[CLGeocoder alloc] init];
+    }
+    
+    [self.reverseGeo reverseGeocodeLocation:curLocation completionHandler:
+     ^(NSArray *placemarks, NSError *error) {
+         CLPlacemark *placemark = [placemarks firstObject];
+        // self.locationString = [NSString stringWithFormat:@"%@, %@", [placemark name],[placemark locality]];
+         
+         //find zipcode and send it to API and get response back
+         _zipCode = [[placemark addressDictionary] objectForKey:@"ZIP"];
+         [self getCrimeDataWithLatitude:_userLoc.latitude andLongitude:_userLoc.longitude andZipCode:_zipCode andCity:@"doesntmatternow"];
+     }];
+}
+
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFailWithError:(NSError *)error {
+    //  UIAlertView *err = [[UIAlertView alloc] initWithTitle:@"Error" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    
+    //[err show];
+}
+- (void)reverseGeocoder:(MKReverseGeocoder *)geocoder didFindPlacemark:(MKPlacemark *)placemark
+{
+    
+    
+}
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+    NSLog(@"ERROR UPDATING LOCATION: %@", [error localizedDescription]);
+}
+
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {

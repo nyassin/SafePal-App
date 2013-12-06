@@ -16,7 +16,7 @@
 
 @interface MainVC ()
 @property BOOL isNightTime, _isOnWifi;
-@property (strong, nonatomic) NSTimer *timer;
+@property (weak, nonatomic) NSTimer *timer;
 @property (strong, nonatomic) NSString *zipCode;
 @property (strong, nonatomic) NSArray *crimeCategories;
 @property CLLocationCoordinate2D userLoc;
@@ -31,6 +31,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    //[self sendLocalNotification];
 	// setting night time to false to start out
     _isNightTime = NO;
     __isOnWifi = NO;
@@ -83,7 +84,7 @@
     else
         date = [date dateByAddingTimeInterval:60*60*44]; //set the date to tomorrow at 8PM
     
-    //I'm not sure how this works? could you explain it to me please? Why not have one timer that cheks the hour every hour and if it's not at night, it just kills the timer that works every 5 minutes. if it is, it activates it.
+
     NSTimer *timer8PM;
     timer8PM = [NSTimer scheduledTimerWithTimeInterval:[date timeIntervalSinceNow] target:self selector:@selector(startTracking:) userInfo:nil repeats:NO];
 
@@ -98,7 +99,7 @@
 -(void) startTracking: (NSTimer *) timer {
 //    _timer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(fireTimer2:) userInfo:nil repeats:YES];
     NSTimer *newTimer;
-    newTimer = [NSTimer scheduledTimerWithTimeInterval:100 target:self selector:@selector(fireTimer2:) userInfo:nil repeats:YES];
+    newTimer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(fireTimer2:) userInfo:nil repeats:YES];
 //    [self updateCurrentLocationLabel];
 
 }
@@ -173,12 +174,11 @@
 	[geocoder start];
 
     [_mapView setRegion:viewRegion animated:YES];
-    
+    NSLog(@"got location");
     //stop location manager
     UIApplicationState state = [[UIApplication sharedApplication] applicationState];
     if (state == UIApplicationStateBackground || state == UIApplicationStateInactive){
-    [_locationManager stopUpdatingLocation];
-
+        [_locationManager stopUpdatingLocation];
    }
 
 }
@@ -275,7 +275,7 @@
 
 -(void) sendLocalNotification {
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
-    localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:0];
+    localNotification.fireDate = [NSDate dateWithTimeIntervalSinceNow:120];
     localNotification.alertBody = @"High crime detected in the area. Be careful.";
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
 
@@ -319,9 +319,8 @@
 @end
 
 //TODO
-    //make the time work only between 8pm and 6 AM
-    // if the person never left a dangerous area, no need to send another notification
-    // check for wifi
+    //on/off
+    //last location update... was it dangerous?
 
 
 
